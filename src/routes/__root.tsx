@@ -6,13 +6,14 @@ import {
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 
-import Header from "../components/Header";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import Header from "~/components/header.tsx";
 
-import ConvexProvider from "../integrations/convex/provider.tsx";
+export default function LayoutAddition() {
+	return <ReactQueryDevtools buttonPosition="bottom-right" />;
+}
 
-import TanStackQueryLayout from "../integrations/tanstack-query/layout.tsx";
-
-import appCss from "../styles.css?url";
+import appCss from "~/styles.css?url";
 
 import type { QueryClient } from "@tanstack/react-query";
 
@@ -44,14 +45,11 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 
 	component: () => (
 		<RootDocument>
-			<ConvexProvider>
-				<Header />
+			<Header />
 
-				<Outlet />
-				<TanStackRouterDevtools />
-
-				<TanStackQueryLayout />
-			</ConvexProvider>
+			<Outlet />
+			<TanStackRouterDevtools />
+			<ReactQueryDevtools buttonPosition="bottom-right" />
 		</RootDocument>
 	),
 });
