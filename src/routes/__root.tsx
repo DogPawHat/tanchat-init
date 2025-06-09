@@ -7,7 +7,6 @@ import {
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import Header from "~/components/header.tsx";
 
 export default function LayoutAddition() {
 	return <ReactQueryDevtools buttonPosition="bottom-right" />;
