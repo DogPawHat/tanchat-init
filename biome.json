@@ -8,7 +8,13 @@
 	"files": {
 		"ignoreUnknown": false,
 		"ignore": ["src/routeTree.gen.ts", "convex/_generated/*"],
-		"include": ["src/*", "convex/*", ".vscode/*", "index.html", "vite.config.js"]
+		"include": [
+			"src/*",
+			"convex/*",
+			".vscode/*",
+			"index.html",
+			"vite.config.ts"
+		]
 	},
 	"formatter": {
 		"enabled": true,
