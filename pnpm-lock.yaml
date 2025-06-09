@@ -11,9 +11,15 @@ importers:
       '@ai-sdk/anthropic':
         specifier: ^1.1.17
         version: 1.2.12(zod@3.25.56)
+      '@ai-sdk/google':
+        specifier: ^1.2.19
+        version: 1.2.19(zod@3.25.56)
       '@ai-sdk/react':
         specifier: ^1.1.23
         version: 1.2.12(react@19.1.0)(zod@3.25.56)
+      '@convex-dev/agent':
+        specifier: ^0.1.6
+        version: 0.1.6(ai@4.3.16(react@19.1.0)(zod@3.25.56))(convex-helpers@0.1.92(convex@1.24.8(react@19.1.0))(react@19.1.0)(typescript@5.8.3)(zod@3.25.56))(convex@1.24.8(react@19.1.0))(react@19.1.0)
       '@convex-dev/react-query':
         specifier: 0.0.0-alpha.8
         version: 0.0.0-alpha.8(@tanstack/react-query@5.80.6(react@19.1.0))(convex@1.24.8(react@19.1.0))
@@ -158,6 +164,12 @@ packages:
 
   '@ai-sdk/anthropic@1.2.12':
     resolution: {integrity: sha512-YSzjlko7JvuiyQFmI9RN1tNZdEiZxc+6xld/0tq/VkJaHpEzGAb1yiNxxvmYVcjvfu/PcvCxAAYXmTYQQ63IHQ==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      zod: ^3.0.0
+
+  '@ai-sdk/google@1.2.19':
+    resolution: {integrity: sha512-Xgl6eftIRQ4srUdCzxM112JuewVMij5q4JLcNmHcB68Bxn9dpr3MVUSPlJwmameuiQuISIA8lMB+iRiRbFsaqA==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.0.0
@@ -400,6 +412,17 @@ packages:
   '@colors/colors@1.6.0':
     resolution: {integrity: sha512-Ir+AOibqzrIsL6ajt3Rz3LskB7OiMVHqltZmspbW/TJuTVuyOMirVqAkjfY6JISiLHgyNqicAC8AyHHGzNd/dA==}
     engines: {node: '>=0.1.90'}
+
+  '@convex-dev/agent@0.1.6':
+    resolution: {integrity: sha512-xo8GWHPV7lcR2duvXMfsnHdfy+suhPcIohx8yHFU+oS3mkWlEDFuwLxKSsdpX7CCimyEFEv7C/u8WShEWvqsOQ==}
+    peerDependencies:
+      ai: ^4.3.4
+      convex: ^1.23.0
+      convex-helpers: '>=0.1.91-alpha.0 || ^0.1.91'
+      react: ^18.3.1 || ^19.0.0
+    peerDependenciesMeta:
+      react:
+        optional: true
 
   '@convex-dev/react-query@0.0.0-alpha.8':
     resolution: {integrity: sha512-Rv/q7/CplU75f7ckBd2vh+HoeeQ0tOrjwMl14Hk7D/03e55oUIU0TV5JYYzC79ZQyyAtoj7CmCo5ZxcmtKNv1Q==}
@@ -2313,6 +2336,28 @@ packages:
 
   convert-source-map@2.0.0:
     resolution: {integrity: sha512-Kvp459HrV2FEJ1CAsi1Ku+MY3kasH19TFykTz2xWmMeq6bk2NU3XXvfJ+Q61m0xktWwt+1HSYf3JZsTms3aRJg==}
+
+  convex-helpers@0.1.92:
+    resolution: {integrity: sha512-k8Gm+JhBdS8oRHTORMEJQYHjOa0jmwV5ugCBh38Rfr+RilvYLNzc4oTD6JH7jngRf6eaChlQhvyu1cCxzr+1Ug==}
+    hasBin: true
+    peerDependencies:
+      '@standard-schema/spec': ^1.0.0
+      convex: ^1.13.0
+      hono: ^4.0.5
+      react: ^17.0.2 || ^18.0.0 || ^19.0.0
+      typescript: ^5.5
+      zod: ^3.22.4
+    peerDependenciesMeta:
+      '@standard-schema/spec':
+        optional: true
+      hono:
+        optional: true
+      react:
+        optional: true
+      typescript:
+        optional: true
+      zod:
+        optional: true
 
   convex@1.24.8:
     resolution: {integrity: sha512-WNKLXhOboRthS1cAi8EbBpiEsXJF2UD2H6rEd4f6BjISd+/5P+aDMw5xUpYMsbATdxqSmEoIl5QsciWJcXyW+A==}
@@ -5019,6 +5064,12 @@ snapshots:
       '@ai-sdk/provider-utils': 2.2.8(zod@3.25.56)
       zod: 3.25.56
 
+  '@ai-sdk/google@1.2.19(zod@3.25.56)':
+    dependencies:
+      '@ai-sdk/provider': 1.1.3
+      '@ai-sdk/provider-utils': 2.2.8(zod@3.25.56)
+      zod: 3.25.56
+
   '@ai-sdk/provider-utils@2.2.8(zod@3.25.56)':
     dependencies:
       '@ai-sdk/provider': 1.1.3
@@ -5302,6 +5353,14 @@ snapshots:
       mime: 3.0.0
 
   '@colors/colors@1.6.0': {}
+
+  '@convex-dev/agent@0.1.6(ai@4.3.16(react@19.1.0)(zod@3.25.56))(convex-helpers@0.1.92(convex@1.24.8(react@19.1.0))(react@19.1.0)(typescript@5.8.3)(zod@3.25.56))(convex@1.24.8(react@19.1.0))(react@19.1.0)':
+    dependencies:
+      ai: 4.3.16(react@19.1.0)(zod@3.25.56)
+      convex: 1.24.8(react@19.1.0)
+      convex-helpers: 0.1.92(convex@1.24.8(react@19.1.0))(react@19.1.0)(typescript@5.8.3)(zod@3.25.56)
+    optionalDependencies:
+      react: 19.1.0
 
   '@convex-dev/react-query@0.0.0-alpha.8(@tanstack/react-query@5.80.6(react@19.1.0))(convex@1.24.8(react@19.1.0))':
     dependencies:
@@ -7315,6 +7374,14 @@ snapshots:
   content-type@1.0.5: {}
 
   convert-source-map@2.0.0: {}
+
+  convex-helpers@0.1.92(convex@1.24.8(react@19.1.0))(react@19.1.0)(typescript@5.8.3)(zod@3.25.56):
+    dependencies:
+      convex: 1.24.8(react@19.1.0)
+    optionalDependencies:
+      react: 19.1.0
+      typescript: 5.8.3
+      zod: 3.25.56
 
   convex@1.24.8(react@19.1.0):
     dependencies:
