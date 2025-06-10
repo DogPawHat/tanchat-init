@@ -15,7 +15,7 @@
     "@ai-sdk/anthropic": "^1.1.17",
     "@ai-sdk/google": "^1.2.19",
     "@ai-sdk/react": "^1.1.23",
-    "@convex-dev/agent": "^0.1.6",
+    "@convex-dev/agent": "^0.1.7",
     "@convex-dev/react-query": "0.0.0-alpha.8",
     "@modelcontextprotocol/sdk": "^1.8.0",
     "@radix-ui/react-label": "^2.1.7",
@@ -37,6 +37,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "convex": "^1.19.2",
+    "convex-helpers": "^0.1.92",
     "highlight.js": "^11.11.1",
     "lucide-react": "^0.513.0",
     "react": "^19.0.0",
@@ -64,5 +65,10 @@
     "vite": "^6.1.0",
     "vitest": "^3.2.3",
     "web-vitals": "^5.0.2"
-  }
+  },
+  "trustedDependencies": [
+    "@biomejs/biome",
+    "@parcel/watcher",
+    "@tailwindcss/oxide"
+  ]
 }

@@ -9,6 +9,7 @@ import { routeTree } from "./routeTree.gen";
 
 import "./styles.css";
 import { QueryClient } from "@tanstack/react-query";
+import { ConvexHttpClient } from "convex/browser";
 import { ConvexProvider } from "convex/react";
 
 // Create a new router instance
@@ -18,6 +19,7 @@ export const createRouter = () => {
 		console.error("missing envar VITE_CONVEX_URL");
 	}
 	const convexQueryClient = new ConvexQueryClient(CONVEX_URL);
+	const convexHttpClient = new ConvexHttpClient(CONVEX_URL);
 
 	const queryClient = new QueryClient({
 		defaultOptions: {
@@ -34,9 +36,13 @@ export const createRouter = () => {
 			routeTree,
 			context: {
 				queryClient,
+				convexHttpClient,
 			},
 			scrollRestoration: true,
 			defaultPreloadStaleTime: 0,
+			defaultNotFoundComponent: () => <div>Not Found</div>,
+			defaultErrorComponent: () => <div>Error</div>,
+			defaultPendingComponent: () => <div>Loading...</div>,
 			Wrap: ({ children }) => (
 				<ConvexProvider client={convexQueryClient.convexClient}>
 					{children}

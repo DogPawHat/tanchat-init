@@ -7,6 +7,7 @@ import {
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import type { ConvexHttpClient } from "convex/browser";
 
 export default function LayoutAddition() {
 	return <ReactQueryDevtools buttonPosition="bottom-right" />;
@@ -18,6 +19,7 @@ import type { QueryClient } from "@tanstack/react-query";
 
 interface MyRouterContext {
 	queryClient: QueryClient;
+	convexHttpClient: ConvexHttpClient;
 }
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({

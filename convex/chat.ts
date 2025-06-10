@@ -73,11 +73,9 @@ export const listThreadMessages = query({
 });
 
 export const createThread = mutation({
-	args: {
-		prompt: v.string(),
-	},
-	handler: async (ctx, { prompt }) => {
-		const { threadId } = await chatAgent.createThread(ctx, {});
+	args: {},
+	handler: async (ctx) => {
+		const { threadId } = await chatAgent.createThread(ctx);
 		return threadId;
 	},
 });
