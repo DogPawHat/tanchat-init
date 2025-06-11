@@ -18,19 +18,19 @@
 	},
 	"formatter": {
 		"enabled": true,
-		"indentStyle": "tab"
+		"indentStyle": "tab",
+		"indentWidth": 2
 	},
 	"organizeImports": {
-		"enabled": true
+		"enabled": false
 	},
 	"linter": {
-		"enabled": true,
-		"rules": {
-			"recommended": true
-		}
+		"enabled": false
 	},
 	"javascript": {
 		"formatter": {
+			"lineWidth": 80,
+			"semicolons": "always",
 			"quoteStyle": "double"
 		}
 	}

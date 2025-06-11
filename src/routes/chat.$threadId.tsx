@@ -15,7 +15,6 @@ import { api } from "convex/_generated/api";
 import { useMutation } from "convex/react";
 import { Loader2, Send } from "lucide-react";
 import { Button } from "~/components/ui/button";
-import { cn } from "~/lib/utils";
 
 export const Route = createFileRoute("/chat/$threadId")({
 	component: ChatThread,

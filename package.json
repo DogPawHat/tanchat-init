@@ -8,14 +8,13 @@
     "build": "vite build",
     "test": "vitest run",
     "format": "biome format",
-    "lint": "biome lint",
-    "check": "biome check"
+    "lint": "oxlint",
+    "check": "pnpm format && pnpm lint"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^1.2.12",
     "@ai-sdk/google": "^1.2.19",
     "@ai-sdk/react": "^1.2.12",
-    "@biomejs/biome": "^1.9.4",
     "@convex-dev/agent": "link:../../agent",
     "@convex-dev/react-query": "0.0.0-alpha.8",
     "@modelcontextprotocol/sdk": "^1.12.1",
@@ -56,12 +55,14 @@
     "zod": "^3.25.61"
   },
   "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/react": "^16.3.0",
     "@types/react": "^19.1.7",
     "@types/react-dom": "^19.1.6",
     "@vitejs/plugin-react": "^4.5.2",
     "jsdom": "^26.1.0",
+    "oxlint": "^1.0.0",
     "typescript": "^5.8.3",
     "vite": "^6.3.5",
     "vitest": "^3.2.3",
