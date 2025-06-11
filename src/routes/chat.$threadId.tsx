@@ -6,33 +6,22 @@ import {
 	useThreadMessages,
 } from "@convex-dev/agent/react";
 import { useForm } from "@tanstack/react-form";
+import { StickToBottom } from "use-stick-to-bottom";
+
 import { createFileRoute } from "@tanstack/react-router";
+import { Textarea } from "~/components/ui/textarea";
+
 import { api } from "convex/_generated/api";
 import { useMutation } from "convex/react";
 import { Loader2, Send } from "lucide-react";
+import { Button } from "~/components/ui/button";
 import { cn } from "~/lib/utils";
 
 export const Route = createFileRoute("/chat/$threadId")({
 	component: ChatThread,
 });
 
-function MessageFormWrapper({ children }: { children: React.ReactNode }) {
-	return (
-		<div className="absolute bottom-0 left-0 w-full">
-			<div className="pointer-events-none absolute bottom-0 z-10 w-full px-2">
-				<div className="relative mx-auto flex w-full max-w-3xl flex-col text-center">
-					<div className="pointer-events-auto">
-						<div className="p-2 pb-0">{children}</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	);
-}
-
-function MessageForm({
-	sendMessage,
-}: { sendMessage: (message: string) => void }) {
+function ChatBox({ sendMessage }: { sendMessage: (message: string) => void }) {
 	const form = useForm({
 		defaultValues: {
 			message: "",
@@ -55,7 +44,7 @@ function MessageForm({
 				<div className="flex flex-grow flex-row items-start">
 					<form.Field name="message">
 						{(field) => (
-							<textarea
+							<Textarea
 								id={field.name}
 								value={field.state.value}
 								onBlur={field.handleBlur}
@@ -72,9 +61,9 @@ function MessageForm({
 						selector={(state) => [state.canSubmit, state.isSubmitting]}
 					>
 						{([canSubmit, isSubmitting]) => (
-							<button
+							<Button
 								type="submit"
-								className="p-3 bg-purple-600 hover:bg-purple-700 text-white rounded-xl transition-all duration-200 shadow-sm hover:shadow-md"
+								className="p-3 bg-purple-600 hover:bg-purple-700"
 								disabled={!canSubmit}
 							>
 								{isSubmitting ? (
@@ -82,7 +71,7 @@ function MessageForm({
 								) : (
 									<Send className="w-4 h-4" />
 								)}
-							</button>
+							</Button>
 						)}
 					</form.Subscribe>
 				</div>
@@ -107,34 +96,29 @@ function ChatThread() {
 	);
 
 	return (
-		<main className="flex w-full flex-1 flex-col overflow-hidden transition-[width,height] bg-gray-50">
+		<main className="bg-gray-50">
 			{/* Chat Messages Area */}
-			<div
-				className={cn(
-					"absolute bottom-0 top-0 w-full overflow-hidden border-l border-t",
-					"bg-fixed pb-[140px] transition-all",
-				)}
-			>
-				{messages.results.length === 0 ? (
-					<div className="px-8 text-center">
-						<h2 className="mb-2 text-3xl font-semibold tracking-tight text-gray-800 md:text-3xl">
-							How can I help you?
-						</h2>
-					</div>
-				) : null}
-				{messages.results.length > 0
-					? toUIMessages(messages.results).map((message) => (
-							<Message key={message.id} message={message} />
-						))
-					: null}
-			</div>
+			<StickToBottom className="h-[50vh] relative" resize="smooth">
+				<StickToBottom.Content className="flex flex-col gap-4">
+					{messages.results.length === 0 ? (
+						<div className="px-8 text-center">
+							<h2 className="mb-2 text-3xl font-semibold tracking-tight text-gray-800 md:text-3xl">
+								How can I help you?
+							</h2>
+						</div>
+					) : null}
+					{messages.results.length > 0
+						? toUIMessages(messages.results).map((message) => (
+								<Message key={message.id} message={message} />
+							))
+						: null}
+				</StickToBottom.Content>
 
-			{/* Input Area */}
-			<MessageFormWrapper>
-				<MessageForm
+				{/* Input Area */}
+				<ChatBox
 					sendMessage={(prompt) => void sendMessage({ threadId, prompt })}
 				/>
-			</MessageFormWrapper>
+			</StickToBottom>
 		</main>
 	);
 }
