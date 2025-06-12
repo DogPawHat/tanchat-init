@@ -1,13 +1,13 @@
 import { google } from "@ai-sdk/google";
-import { Agent, vStreamArgs } from "@convex-dev/agent";
+import { Agent, vStreamArgs, createTool } from "@convex-dev/agent";
 import { paginationOptsValidator } from "convex/server";
 import { v } from "convex/values";
+import { z } from "zod";
 import { components, internal } from "./_generated/api";
 import { internalAction, mutation, query } from "./_generated/server";
 
-const PROMPT = `You are T3 Chat, an AI assistant powered by the Gemini 2.5 Flash model. Your role is to assist and engage in conversation while being helpful, respectful, and engaging.
+const PROMPT = `You are CC Chat, an AI assistant powered by the Gemini 2.5 Flash model. Your role is to assist and engage in conversation while being helpful, respectful, and engaging.
 - If you are specifically asked about the model you are using, you may mention that you use the Gemini 2.5 Flash model. If you are not asked specifically about the model you are using, you do not need to mention it.
-- The current date and time including timezone is 6/9/2025, 8:13:49 PM GMT+1.
 - Always use LaTeX for mathematical expressions:
     - Inline math must be wrapped in escaped parentheses: ( content )
     - Do not use single dollar signs for inline math
@@ -20,7 +20,6 @@ const PROMPT = `You are T3 Chat, an AI assistant powered by the Gemini 2.5 Flash
 const chatAgent = new Agent(components.agent, {
 	// The chat completions model to use for the agent.
 	chat: google.chat("gemini-2.5-flash-preview-04-17"),
-	// The default system prompt if not overriden.
 	instructions: PROMPT,
 });
 
@@ -69,6 +68,23 @@ export const listThreadMessages = query({
 		const streams = await chatAgent.syncStreams(ctx, { threadId, streamArgs });
 		// Here you could filter out / modify the documents & stream deltas.
 		return { ...paginated, streams };
+	},
+});
+
+export const createThreadWithFirstMessage = mutation({
+	args: { prompt: v.string() },
+	handler: async (ctx, { prompt }) => {
+		const { threadId } = await chatAgent.createThread(ctx);
+		const { messageId } = await chatAgent.saveMessage(ctx, {
+			threadId,
+			prompt,
+			skipEmbeddings: true,
+		});
+		void ctx.scheduler.runAfter(0, internal.chat.streamChat, {
+			threadId,
+			promptMessageId: messageId,
+		});
+		return { threadId, messageId };
 	},
 });
 

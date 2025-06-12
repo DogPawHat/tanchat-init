@@ -4,5 +4,6 @@
     "src/convex/_generated/*",
     "src/routeTree.gen.ts",
     "node_modules/*"
-  ]
+  ],
+  "plugins": ["typescript", "unicorn", "react", "oxc", "import", "promise"]
 }
