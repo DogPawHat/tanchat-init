@@ -20,12 +20,8 @@ function ChatThreadPage() {
 	);
 
 	return (
-		<main className="bg-gray-50 min-h-screen flex items-center justify-center p-4">
-			<div className="w-full max-w-4xl">
-				<Chat sendMessage={(prompt) => void sendMessage({ threadId, prompt })}>
-					<ChatThread threadId={threadId} />
-				</Chat>
-			</div>
-		</main>
+		<Chat sendMessage={(prompt) => void sendMessage({ threadId, prompt })}>
+			<ChatThread threadId={threadId} />
+		</Chat>
 	);
 }

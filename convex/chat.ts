@@ -1,5 +1,5 @@
 import { google } from "@ai-sdk/google";
-import { Agent, vStreamArgs, createTool } from "@convex-dev/agent";
+import { Agent, vStreamArgs } from "@convex-dev/agent";
 import { paginationOptsValidator } from "convex/server";
 import { v } from "convex/values";
 import { z } from "zod";
@@ -74,7 +74,9 @@ export const listThreadMessages = query({
 export const createThreadWithFirstMessage = mutation({
 	args: { prompt: v.string() },
 	handler: async (ctx, { prompt }) => {
-		const { threadId } = await chatAgent.createThread(ctx);
+		const { threadId } = await chatAgent.createThread(ctx, {
+			userId: "default",
+		});
 		const { messageId } = await chatAgent.saveMessage(ctx, {
 			threadId,
 			prompt,
@@ -91,7 +93,85 @@ export const createThreadWithFirstMessage = mutation({
 export const createThread = mutation({
 	args: {},
 	handler: async (ctx) => {
-		const { threadId } = await chatAgent.createThread(ctx);
+		const { threadId } = await chatAgent.createThread(ctx, {
+			userId: "default",
+		});
 		return threadId;
+	},
+});
+
+export const listThreads = query({
+	args: {},
+	handler: async (ctx) => {
+		const threadsResult = await ctx.runQuery(
+			components.agent.threads.listThreadsByUserId,
+			{
+				userId: "default", // For now using a default user
+				order: "desc",
+				paginationOpts: { cursor: null, numItems: 20 },
+			},
+		);
+
+		// Enrich each thread with first message for display
+		const enrichedThreads = await Promise.all(
+			threadsResult.page.map(async (thread) => {
+				try {
+					const messages = await chatAgent.listMessages(ctx, {
+						threadId: thread._id,
+						paginationOpts: { cursor: null, numItems: 5 },
+					});
+
+					// Sort messages by creation time and find first user message
+					const sortedMessages = messages.page.sort(
+						(a, b) => a._creationTime - b._creationTime,
+					);
+					const firstUserMessage = sortedMessages.find(
+						(msg) => msg.message?.role === "user",
+					);
+
+					return {
+						...thread,
+						firstMessage: firstUserMessage?.text || null,
+					};
+				} catch (error) {
+					// If we can't get messages, just return the thread as-is
+					return {
+						...thread,
+						firstMessage: null,
+					};
+				}
+			}),
+		);
+
+		return {
+			...threadsResult,
+			page: enrichedThreads,
+		};
+	},
+});
+
+export const getThreadWithFirstMessage = query({
+	args: { threadId: v.string() },
+	handler: async (ctx, { threadId }) => {
+		const thread = await ctx.runQuery(components.agent.threads.getThread, {
+			threadId,
+		});
+
+		if (!thread) return null;
+
+		// Get the first user message for display
+		const messages = await chatAgent.listMessages(ctx, {
+			threadId,
+			paginationOpts: { cursor: null, numItems: 1 },
+		});
+
+		const firstMessage = messages.page.find(
+			(msg) => msg.message?.role === "user",
+		);
+
+		return {
+			...thread,
+			firstMessage: firstMessage?.text || null,
+		};
 	},
 });

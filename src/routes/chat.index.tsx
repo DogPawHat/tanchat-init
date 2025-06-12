@@ -3,7 +3,6 @@ import { useMutation } from "convex/react";
 import { Chat } from "~/features/chat/components/chat";
 import { api } from "convex/_generated/api";
 import { useCallback } from "react";
-import { optimisticallySendMessage } from "@convex-dev/agent/react";
 
 export const Route = createFileRoute("/chat/")({
 	component: ChatInitialPage,
@@ -13,8 +12,6 @@ function ChatInitialPage() {
 	const navigate = Route.useNavigate();
 	const createThreadWithFirstMessage = useMutation(
 		api.chat.createThreadWithFirstMessage,
-	).withOptimisticUpdate(
-		optimisticallySendMessage(api.chat.listThreadMessages),
 	);
 
 	const sendMessage = useCallback(
