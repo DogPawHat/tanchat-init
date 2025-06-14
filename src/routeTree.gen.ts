@@ -68,13 +68,6 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/chat': {
       id: '/chat'
       path: '/chat'
@@ -82,18 +75,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ChatRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/chat/$threadId': {
-      id: '/chat/$threadId'
-      path: '/$threadId'
-      fullPath: '/chat/$threadId'
-      preLoaderRoute: typeof ChatThreadIdRouteImport
-      parentRoute: typeof ChatRoute
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/chat/': {
       id: '/chat/'
       path: '/'
       fullPath: '/chat/'
       preLoaderRoute: typeof ChatIndexRouteImport
+      parentRoute: typeof ChatRoute
+    }
+    '/chat/$threadId': {
+      id: '/chat/$threadId'
+      path: '/$threadId'
+      fullPath: '/chat/$threadId'
+      preLoaderRoute: typeof ChatThreadIdRouteImport
       parentRoute: typeof ChatRoute
     }
   }

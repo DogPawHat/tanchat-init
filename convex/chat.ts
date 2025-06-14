@@ -1,8 +1,7 @@
-import { google } from "@ai-sdk/google";
+import { openrouter } from "@openrouter/ai-sdk-provider";
 import { Agent, vStreamArgs } from "@convex-dev/agent";
 import { paginationOptsValidator } from "convex/server";
 import { v } from "convex/values";
-import { z } from "zod";
 import { components, internal } from "./_generated/api";
 import { internalAction, mutation, query } from "./_generated/server";
 
@@ -17,9 +16,15 @@ const PROMPT = `You are CC Chat, an AI assistant powered by the Gemini 2.5 Flash
     - Ensure it is properly formatted using Prettier with a print width of 80 characters
     - Present it in Markdown code blocks with the correct language extension indicated`;
 
+const createRandomThreadSummary = (message: string) => {
+	// trunchate the message to 100 characters
+	const truncatedMessage = message.slice(0, 100);
+	return truncatedMessage;
+};
+
 const chatAgent = new Agent(components.agent, {
 	// The chat completions model to use for the agent.
-	chat: google.chat("gemini-2.5-flash-preview-04-17"),
+	chat: openrouter("google/gemini-2.5-flash-preview-04-17"),
 	instructions: PROMPT,
 });
 
@@ -41,9 +46,13 @@ export const streamChatAsynchronously = mutation({
 });
 
 export const streamChat = internalAction({
-	args: { promptMessageId: v.string(), threadId: v.string() },
+	args: {
+		promptMessageId: v.string(),
+		threadId: v.string(),
+	},
 	handler: async (ctx, { promptMessageId, threadId }) => {
 		const { thread } = await chatAgent.continueThread(ctx, { threadId });
+
 		const result = await thread.streamText(
 			{ promptMessageId },
 			{ saveStreamDeltas: true },
@@ -76,6 +85,7 @@ export const createThreadWithFirstMessage = mutation({
 	handler: async (ctx, { prompt }) => {
 		const { threadId } = await chatAgent.createThread(ctx, {
 			userId: "default",
+			summary: createRandomThreadSummary(prompt),
 		});
 		const { messageId } = await chatAgent.saveMessage(ctx, {
 			threadId,

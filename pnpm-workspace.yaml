@@ -1,7 +1,5 @@
 onlyBuiltDependencies:
-  - '@biomejs/biome'
-  - '@parcel/watcher'
-  - '@tailwindcss/oxide'
+  - "@biomejs/biome"
+  - "@parcel/watcher"
+  - "@tailwindcss/oxide"
   - esbuild
-overrides:
-  '@convex-dev/agent': link:../../agent
