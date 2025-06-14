@@ -1,4 +1,5 @@
 import { openrouter } from "@openrouter/ai-sdk-provider";
+import { generateText } from "ai";
 import { Agent, vStreamArgs } from "@convex-dev/agent";
 import { paginationOptsValidator } from "convex/server";
 import { v } from "convex/values";
@@ -16,11 +17,27 @@ const PROMPT = `You are CC Chat, an AI assistant powered by the Gemini 2.5 Flash
     - Ensure it is properly formatted using Prettier with a print width of 80 characters
     - Present it in Markdown code blocks with the correct language extension indicated`;
 
-const createRandomThreadSummary = (message: string) => {
-	// trunchate the message to 100 characters
-	const truncatedMessage = message.slice(0, 100);
-	return truncatedMessage;
-};
+export const generateTitle = internalAction({
+	args: { message: v.string(), threadId: v.string() },
+	handler: async (ctx, { message, threadId }) => {
+		const systemPrompt =
+			"Your one and only role is to generate a summary for a thread based on the first message.";
+		const prompt = `Generate a summary based on the following message: ${message}`;
+
+		const result = await generateText({
+			model: openrouter("google/gemini-2.5-flash-preview-04-17"),
+			system: systemPrompt,
+			prompt,
+		});
+
+		await ctx.runMutation(components.agent.threads.updateThread, {
+			threadId,
+			patch: {
+				title: result.text,
+			},
+		});
+	},
+});
 
 const chatAgent = new Agent(components.agent, {
 	// The chat completions model to use for the agent.
@@ -85,12 +102,16 @@ export const createThreadWithFirstMessage = mutation({
 	handler: async (ctx, { prompt }) => {
 		const { threadId } = await chatAgent.createThread(ctx, {
 			userId: "default",
-			summary: createRandomThreadSummary(prompt),
+			title: "Generating title...",
 		});
 		const { messageId } = await chatAgent.saveMessage(ctx, {
 			threadId,
 			prompt,
 			skipEmbeddings: true,
+		});
+		void ctx.scheduler.runAfter(0, internal.chat.generateTitle, {
+			message: prompt,
+			threadId,
 		});
 		void ctx.scheduler.runAfter(0, internal.chat.streamChat, {
 			threadId,
@@ -100,63 +121,14 @@ export const createThreadWithFirstMessage = mutation({
 	},
 });
 
-export const createThread = mutation({
-	args: {},
-	handler: async (ctx) => {
-		const { threadId } = await chatAgent.createThread(ctx, {
-			userId: "default",
-		});
-		return threadId;
-	},
-});
-
 export const listThreads = query({
 	args: {},
 	handler: async (ctx) => {
-		const threadsResult = await ctx.runQuery(
-			components.agent.threads.listThreadsByUserId,
-			{
-				userId: "default", // For now using a default user
-				order: "desc",
-				paginationOpts: { cursor: null, numItems: 20 },
-			},
-		);
-
-		// Enrich each thread with first message for display
-		const enrichedThreads = await Promise.all(
-			threadsResult.page.map(async (thread) => {
-				try {
-					const messages = await chatAgent.listMessages(ctx, {
-						threadId: thread._id,
-						paginationOpts: { cursor: null, numItems: 5 },
-					});
-
-					// Sort messages by creation time and find first user message
-					const sortedMessages = messages.page.sort(
-						(a, b) => a._creationTime - b._creationTime,
-					);
-					const firstUserMessage = sortedMessages.find(
-						(msg) => msg.message?.role === "user",
-					);
-
-					return {
-						...thread,
-						firstMessage: firstUserMessage?.text || null,
-					};
-				} catch (error) {
-					// If we can't get messages, just return the thread as-is
-					return {
-						...thread,
-						firstMessage: null,
-					};
-				}
-			}),
-		);
-
-		return {
-			...threadsResult,
-			page: enrichedThreads,
-		};
+		return await ctx.runQuery(components.agent.threads.listThreadsByUserId, {
+			userId: "default", // For now using a default user
+			order: "desc",
+			paginationOpts: { cursor: null, numItems: 20 },
+		});
 	},
 });
 

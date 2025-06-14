@@ -67,7 +67,7 @@ export function ThreadSidebar() {
 											: "text-gray-900"
 									}`}
 								>
-									{thread.summary || thread.firstMessage || "New Chat"}
+									{thread.title || "New Chat"}
 								</p>
 								<p className="text-xs text-gray-500 mt-1">
 									{new Date(thread._creationTime).toLocaleDateString()}
