@@ -132,6 +132,15 @@ export const listThreads = query({
 	},
 });
 
+export const deleteThread = mutation({
+	args: { threadId: v.string() },
+	handler: async (ctx, { threadId }) => {
+		await ctx.runMutation(components.agent.threads.deleteAllForThreadIdAsync, {
+			threadId,
+		});
+	},
+});
+
 export const getThreadWithFirstMessage = query({
 	args: { threadId: v.string() },
 	handler: async (ctx, { threadId }) => {
