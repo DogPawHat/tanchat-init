@@ -17,16 +17,19 @@ export function Chat(props: {
 	sendMessage: (prompt: string) => void;
 }) {
 	return (
-		<StickToBottom className="h-[50vh] relative" resize="smooth">
-			<StickToBottom.Content className="flex flex-col gap-4 px-4">
-				{props.children}
-			</StickToBottom.Content>
+		<div className="h-screen flex flex-col">
+			{/* Chat Thread (scrollable) */}
+			<StickToBottom className="flex-1 overflow-y-auto">
+				<StickToBottom.Content className="flex flex-col gap-4 px-4">
+					{props.children}
+				</StickToBottom.Content>
 
-			{/* Input Area */}
-			<ChatBoxContainer>
-				<ChatBox sendMessage={props.sendMessage} />
-			</ChatBoxContainer>
-		</StickToBottom>
+				{/* Input Area (stuck to bottom) */}
+				<ChatBoxContainer>
+					<ChatBox sendMessage={props.sendMessage} />
+				</ChatBoxContainer>
+			</StickToBottom>
+		</div>
 	);
 }
 
@@ -69,7 +72,7 @@ function ChatBoxContainer(props: { children: React.ReactNode }) {
 	const { scrollRef, contentRef } = useStickToBottom();
 
 	return (
-		<div className="overflow-auto" ref={scrollRef}>
+		<div className="overflow-auto px-4 pt-4" ref={scrollRef}>
 			<div ref={contentRef}>{props.children}</div>
 		</div>
 	);
@@ -87,7 +90,7 @@ function ChatBox({ sendMessage }: { sendMessage: (message: string) => void }) {
 
 	return (
 		<form
-			className="relative flex items-center space-x-2"
+			className="flex items-center space-x-2"
 			onSubmit={(e) => {
 				e.preventDefault();
 				e.stopPropagation();
