@@ -1,4 +1,4 @@
-import { StickToBottom } from "use-stick-to-bottom";
+import { StickToBottom, useStickToBottom } from "use-stick-to-bottom";
 import { useForm } from "@tanstack/react-form";
 import {
 	type UIMessage,
@@ -17,15 +17,15 @@ export function Chat(props: {
 	sendMessage: (prompt: string) => void;
 }) {
 	return (
-		<StickToBottom className="h-[60vh] relative" resize="smooth">
+		<StickToBottom className="h-[50vh] relative" resize="smooth">
 			<StickToBottom.Content className="flex flex-col gap-4 px-4">
 				{props.children}
 			</StickToBottom.Content>
 
 			{/* Input Area */}
-			<div className="px-4 pt-4">
+			<ChatBoxContainer>
 				<ChatBox sendMessage={props.sendMessage} />
-			</div>
+			</ChatBoxContainer>
 		</StickToBottom>
 	);
 }
@@ -61,6 +61,16 @@ function Message(props: { message: UIMessage }) {
 			>
 				{visibleText}
 			</div>
+		</div>
+	);
+}
+
+function ChatBoxContainer(props: { children: React.ReactNode }) {
+	const { scrollRef, contentRef } = useStickToBottom();
+
+	return (
+		<div className="overflow-auto" ref={scrollRef}>
+			<div ref={contentRef}>{props.children}</div>
 		</div>
 	);
 }
