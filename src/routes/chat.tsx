@@ -7,12 +7,10 @@ export const Route = createFileRoute("/chat")({
 
 function ChatLayout() {
 	return (
-		<div className="bg-gray-50 min-h-screen flex">
+		<div className="bg-gray-50 h-screen flex">
 			<ThreadSidebar />
-			<main className="flex-1 flex items-center justify-center p-4">
-				<div className="w-full max-w-4xl">
-					<Outlet />
-				</div>
+			<main className="flex-1 flex flex-col">
+				<Outlet />
 			</main>
 		</div>
 	);
