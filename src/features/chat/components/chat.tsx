@@ -1,4 +1,3 @@
-import { StickToBottom, useStickToBottom } from "use-stick-to-bottom";
 import { useForm } from "@tanstack/react-form";
 import {
 	type UIMessage,
@@ -17,18 +16,20 @@ export function Chat(props: {
 	sendMessage: (prompt: string) => void;
 }) {
 	return (
-		<div className="h-screen flex flex-col">
+		<div className="h-full flex flex-col">
 			{/* Chat Thread (scrollable) */}
-			<StickToBottom className="flex-1 overflow-y-auto">
-				<StickToBottom.Content className="flex flex-col gap-4 px-4">
+			<div className="flex-1 overflow-auto">
+				<div className="flex flex-col gap-4 p-4 min-h-full">
 					{props.children}
-				</StickToBottom.Content>
+				</div>
+			</div>
 
-				{/* Input Area (stuck to bottom) */}
-				<ChatBoxContainer>
+			{/* Input Area (stuck to bottom of viewport) */}
+			<div className="flex-shrink-0 border-t bg-white">
+				<div className="p-4">
 					<ChatBox sendMessage={props.sendMessage} />
-				</ChatBoxContainer>
-			</StickToBottom>
+				</div>
+			</div>
 		</div>
 	);
 }
@@ -68,15 +69,6 @@ function Message(props: { message: UIMessage }) {
 	);
 }
 
-function ChatBoxContainer(props: { children: React.ReactNode }) {
-	const { scrollRef, contentRef } = useStickToBottom();
-
-	return (
-		<div className="overflow-auto px-4 pt-4" ref={scrollRef}>
-			<div ref={contentRef}>{props.children}</div>
-		</div>
-	);
-}
 
 function ChatBox({ sendMessage }: { sendMessage: (message: string) => void }) {
 	const form = useForm({
@@ -85,54 +77,57 @@ function ChatBox({ sendMessage }: { sendMessage: (message: string) => void }) {
 		},
 		onSubmit: ({ value }) => {
 			sendMessage(value.message);
+			form.reset();
 		},
 	});
 
 	return (
 		<form
-			className="flex items-center space-x-2"
+			className="flex items-end space-x-3"
 			onSubmit={(e) => {
 				e.preventDefault();
 				e.stopPropagation();
 				form.handleSubmit();
 			}}
 		>
-			<div className="flex flex-grow flex-col">
-				<div className="flex flex-grow flex-row items-start">
-					<form.Field name="message">
-						{(field) => (
-							<Textarea
-								id={field.name}
-								value={field.state.value}
-								onBlur={field.handleBlur}
-								onChange={(e) => field.handleChange(e.target.value)}
-								placeholder="Press Enter to send, Shift + Enter for new line"
-								className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none min-h-[52px] max-h-32 text-sm bg-gray-50 focus:bg-white transition-all duration-200"
-								rows={1}
-							/>
-						)}
-					</form.Field>
-				</div>
-				<div className="-mb-px mt-2 flex w-full flex-row-reverse justify-between">
-					<form.Subscribe
-						selector={(state) => [state.canSubmit, state.isSubmitting]}
-					>
-						{([canSubmit, isSubmitting]) => (
-							<Button
-								type="submit"
-								className="p-3 bg-purple-600 hover:bg-purple-700"
-								disabled={!canSubmit}
-							>
-								{isSubmitting ? (
-									<Loader2 className="w-4 h-4 animate-spin" />
-								) : (
-									<Send className="w-4 h-4" />
-								)}
-							</Button>
-						)}
-					</form.Subscribe>
-				</div>
+			<div className="flex-1">
+				<form.Field name="message">
+					{(field) => (
+						<Textarea
+							id={field.name}
+							value={field.state.value}
+							onBlur={field.handleBlur}
+							onChange={(e) => field.handleChange(e.target.value)}
+							onKeyDown={(e) => {
+								if (e.key === "Enter" && !e.shiftKey) {
+									e.preventDefault();
+									form.handleSubmit();
+								}
+							}}
+							placeholder="Type your message... (Press Enter to send, Shift + Enter for new line)"
+							className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none min-h-[52px] max-h-32 text-sm transition-all duration-200"
+							rows={1}
+						/>
+					)}
+				</form.Field>
 			</div>
+			<form.Subscribe
+				selector={(state) => [state.canSubmit, state.isSubmitting]}
+			>
+				{([canSubmit, isSubmitting]) => (
+					<Button
+						type="submit"
+						className="p-3 bg-purple-600 hover:bg-purple-700 rounded-lg"
+						disabled={!canSubmit}
+					>
+						{isSubmitting ? (
+							<Loader2 className="w-4 h-4 animate-spin" />
+						) : (
+							<Send className="w-4 h-4" />
+						)}
+					</Button>
+				)}
+			</form.Subscribe>
 		</form>
 	);
 }
