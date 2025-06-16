@@ -17,7 +17,7 @@ export function ThreadSidebar() {
 
 	if (!threads) {
 		return (
-			<div className="w-72 bg-white border-r border-gray-200 p-4">
+			<div className="w-72 bg-white border-r border-gray-200 p-4 h-screen">
 				<div className="animate-pulse space-y-3">
 					<div className="h-4 bg-gray-200 rounded w-3/4"></div>
 					<div className="h-4 bg-gray-200 rounded w-1/2"></div>
@@ -28,7 +28,7 @@ export function ThreadSidebar() {
 	}
 
 	return (
-		<div className="w-72 bg-white border-r border-gray-200 flex flex-col h-full">
+		<div className="w-72 bg-white border-r border-gray-200 flex flex-col h-screen">
 			{/* Header */}
 			<div className="p-4 border-b border-gray-200">
 				<div className="flex items-center justify-between">
