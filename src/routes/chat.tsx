@@ -10,7 +10,7 @@ function ChatLayout() {
 		<div className="bg-gray-50 h-screen flex">
 			<ThreadSidebar />
 			<main className="flex-1 flex flex-col items-center">
-				<div className="w-full max-w-2xl h-full flex flex-col">
+				<div className="w-full max-w-2xl md:max-w-4xl lg:max-w-6xl h-full flex flex-col">
 					<Outlet />
 				</div>
 			</main>

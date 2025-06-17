@@ -21,17 +21,15 @@ export function Chat(props: {
 	// Auto-scroll to bottom when children change (new messages)
 	useEffect(() => {
 		if (chatContainerRef.current) {
-			chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+			chatContainerRef.current.scrollTop =
+				chatContainerRef.current.scrollHeight;
 		}
 	}, [props.children]);
 
 	return (
 		<div className="h-full flex flex-col bg-white rounded-lg shadow-sm mx-2 my-2">
 			{/* Chat Thread (scrollable) */}
-			<div 
-				ref={chatContainerRef}
-				className="flex-1 overflow-auto"
-			>
+			<div ref={chatContainerRef} className="flex-1 overflow-auto">
 				<div className="flex flex-col gap-1 p-3 min-h-full">
 					{props.children}
 				</div>
@@ -72,9 +70,9 @@ function Message(props: { message: UIMessage }) {
 	return (
 		<div className={`flex ${isUser ? "justify-end" : "justify-start"} mb-1`}>
 			<div
-				className={`rounded-2xl px-3 py-2 max-w-[280px] whitespace-pre-wrap text-sm leading-relaxed ${
-					isUser 
-						? "bg-blue-500 text-white rounded-br-sm" 
+				className={`rounded-2xl px-3 py-2 max-w-xl lg:max-w-2xl whitespace-pre-wrap text-sm leading-relaxed ${
+					isUser
+						? "bg-blue-500 text-white rounded-br-sm"
 						: "bg-gray-100 text-gray-800 rounded-bl-sm"
 				}`}
 			>
@@ -83,7 +81,6 @@ function Message(props: { message: UIMessage }) {
 		</div>
 	);
 }
-
 
 function ChatBox({ sendMessage }: { sendMessage: (message: string) => void }) {
 	const form = useForm({
