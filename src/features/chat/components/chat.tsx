@@ -6,6 +6,7 @@ import {
 	toUIMessages,
 } from "@convex-dev/agent/react";
 import { Loader2, Send } from "lucide-react";
+import { useEffect, useRef } from "react";
 
 import { Button } from "~/components/ui/button";
 import { Textarea } from "~/components/ui/textarea";
@@ -15,18 +16,30 @@ export function Chat(props: {
 	children: React.ReactNode;
 	sendMessage: (prompt: string) => void;
 }) {
+	const chatContainerRef = useRef<HTMLDivElement>(null);
+
+	// Auto-scroll to bottom when children change (new messages)
+	useEffect(() => {
+		if (chatContainerRef.current) {
+			chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+		}
+	}, [props.children]);
+
 	return (
-		<div className="h-full flex flex-col">
+		<div className="h-full flex flex-col bg-white rounded-lg shadow-sm mx-2 my-2">
 			{/* Chat Thread (scrollable) */}
-			<div className="flex-1 overflow-auto">
-				<div className="flex flex-col gap-4 p-4 min-h-full">
+			<div 
+				ref={chatContainerRef}
+				className="flex-1 overflow-auto"
+			>
+				<div className="flex flex-col gap-1 p-3 min-h-full">
 					{props.children}
 				</div>
 			</div>
 
 			{/* Input Area (stuck to bottom of viewport) */}
-			<div className="flex-shrink-0 border-t bg-white">
-				<div className="p-4">
+			<div className="flex-shrink-0 border-t bg-white rounded-b-lg">
+				<div className="p-3">
 					<ChatBox sendMessage={props.sendMessage} />
 				</div>
 			</div>
@@ -57,10 +70,12 @@ function Message(props: { message: UIMessage }) {
 	const isUser = props.message.role === "user";
 	const [visibleText] = useSmoothText(props.message.content);
 	return (
-		<div className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
+		<div className={`flex ${isUser ? "justify-end" : "justify-start"} mb-1`}>
 			<div
-				className={`rounded-lg px-4 py-2 max-w-lg whitespace-pre-wrap shadow-sm ${
-					isUser ? "bg-blue-100 text-blue-900" : "bg-gray-200 text-gray-800"
+				className={`rounded-2xl px-3 py-2 max-w-[280px] whitespace-pre-wrap text-sm leading-relaxed ${
+					isUser 
+						? "bg-blue-500 text-white rounded-br-sm" 
+						: "bg-gray-100 text-gray-800 rounded-bl-sm"
 				}`}
 			>
 				{visibleText}
@@ -83,7 +98,7 @@ function ChatBox({ sendMessage }: { sendMessage: (message: string) => void }) {
 
 	return (
 		<form
-			className="flex items-end space-x-3"
+			className="flex items-end space-x-2"
 			onSubmit={(e) => {
 				e.preventDefault();
 				e.stopPropagation();
@@ -104,8 +119,8 @@ function ChatBox({ sendMessage }: { sendMessage: (message: string) => void }) {
 									form.handleSubmit();
 								}
 							}}
-							placeholder="Type your message... (Press Enter to send, Shift + Enter for new line)"
-							className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none min-h-[52px] max-h-32 text-sm transition-all duration-200"
+							placeholder="Type your message..."
+							className="w-full px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none min-h-[40px] max-h-32 text-sm transition-all duration-200"
 							rows={1}
 						/>
 					)}
@@ -117,7 +132,7 @@ function ChatBox({ sendMessage }: { sendMessage: (message: string) => void }) {
 				{([canSubmit, isSubmitting]) => (
 					<Button
 						type="submit"
-						className="p-3 bg-purple-600 hover:bg-purple-700 rounded-lg"
+						className="p-2 bg-blue-500 hover:bg-blue-600 rounded-full w-10 h-10 flex items-center justify-center"
 						disabled={!canSubmit}
 					>
 						{isSubmitting ? (

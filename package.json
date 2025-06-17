@@ -55,7 +55,7 @@
     "tailwindcss": "^4.1.10",
     "tailwindcss-animate": "^1.0.7",
     "vite-tsconfig-paths": "^5.1.4",
-    "zod": "^3.25.65"
+    "zod": "^3.25.67"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
